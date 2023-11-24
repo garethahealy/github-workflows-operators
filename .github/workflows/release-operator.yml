@@ -314,6 +314,7 @@ jobs:
 
       - name: "Build Operator Image"
         uses: docker/build-push-action@v3
+        id: build_push
         with:
           context: .
           file: "./ci.Dockerfile"
@@ -323,20 +324,16 @@ jobs:
           tags: "${{ env.OPERATOR_IMAGE_REPOSITORY }}:latest-${{ steps.setup-build-step.outputs.platform_os }}-${{ steps.setup-build-step.outputs.platform_arch }},${{ env.OPERATOR_IMAGE_REPOSITORY }}:${{ env.OPERATOR_VERSION }}-${{ steps.setup-build-step.outputs.platform_os }}-${{ steps.setup-build-step.outputs.platform_arch }}"
 
       - name: Cosign login and initialize
-        env:
-          image_registry: ${{ env.OPERATOR_IMAGE_REGISTRY }}
         run: |
-          echo "${{ secrets.REGISTRY_PASSWORD }}" | cosign login --username ${{ secrets.REGISTRY_USERNAME }} --password-stdin ${image_registry%%/*}
+          echo "${{ secrets.REGISTRY_PASSWORD }}" | cosign login --username ${{ secrets.REGISTRY_USERNAME }} --password-stdin ${OPERATOR_IMAGE_REGISTRY%%/*}
           cosign initialize
 
       - name: Sign Operator Image
         id: sign_operator
         env:
-          IMAGE_URI: ${{ env.OPERATOR_IMAGE_REPOSITORY }}:latest-${{ steps.setup-build-step.outputs.platform_os }}-${{ steps.setup-build-step.outputs.platform_arch }}
+          IMAGE_URI: ${{ env.OPERATOR_IMAGE_REPOSITORY }}@${{ steps.build_push.outputs.digest }}
         run: |
-          signed_image_digest=$(cosign triangulate --type=digest ${{ env.IMAGE_URI }})
-          echo "signed_image_digest=${signed_image_digest}" >> $GITHUB_OUTPUT
-          cosign sign --yes ${signed_image_digest}
+          cosign sign --yes ${IMAGE_URI}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.14.0
@@ -345,7 +342,7 @@ jobs:
           TRIVY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
         with:
           scan-type: image
-          image-ref: ${{ steps.sign_operator.outputs.signed_image_digest }}
+          image-ref: ${{ env.OPERATOR_IMAGE_REPOSITORY }}@${{ steps.build_push.outputs.digest }}
           format: "cosign-vuln"
           output: "cosign-vuln.json"
 
@@ -356,14 +353,16 @@ jobs:
           TRIVY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
         with:
           scan-type: image
-          image-ref: ${{ steps.sign_operator.outputs.signed_image_digest }}
+          image-ref: ${{ env.OPERATOR_IMAGE_REPOSITORY }}@${{ steps.build_push.outputs.digest }}
           format: "cyclonedx"
           output: "cyclonedx-sbom.json"
 
       - name: Attach attestations for Operator Image
+        env:
+          IMAGE_URI: ${{ env.OPERATOR_IMAGE_REPOSITORY }}@${{ steps.build_push.outputs.digest }}
         run: |
-          cosign attest --yes --type vuln --predicate cosign-vuln.json ${{ steps.sign_operator.outputs.signed_image_digest }}
-          cosign attest --yes --type cyclonedx --predicate cyclonedx-sbom.json ${{ steps.sign_operator.outputs.signed_image_digest }}
+          cosign attest --yes --type vuln --predicate cosign-vuln.json ${IMAGE_URI}
+          cosign attest --yes --type cyclonedx --predicate cyclonedx-sbom.json ${IMAGE_URI}
 
       - name: Prepare Distribution Artifacts
         shell: bash
@@ -518,6 +517,7 @@ jobs:
 
       - name: "Build Bundle Image"
         uses: docker/build-push-action@v3
+        id: build_push
         with:
           context: .
           file: ./bundle.Dockerfile
@@ -527,20 +527,16 @@ jobs:
           tags: "${{ env.BUNDLE_IMAGE_REPOSITORY }}:latest-${{ steps.setup-build-step.outputs.platform_os }}-${{ steps.setup-build-step.outputs.platform_arch }},${{ env.BUNDLE_IMAGE_REPOSITORY }}:${{ env.BUNDLE_VERSION }}-${{ steps.setup-build-step.outputs.platform_os }}-${{ steps.setup-build-step.outputs.platform_arch }}"
 
       - name: Cosign login and initialize
-        env:
-          image_registry: ${{ env.BUNDLE_IMAGE_REGISTRY }}
         run: |
-          echo "${{ secrets.REGISTRY_PASSWORD }}" | cosign login --username ${{ secrets.REGISTRY_USERNAME }} --password-stdin ${image_registry%%/*}
+          echo "${{ secrets.REGISTRY_PASSWORD }}" | cosign login --username ${{ secrets.REGISTRY_USERNAME }} --password-stdin ${BUNDLE_IMAGE_REGISTRY%%/*}
           cosign initialize
 
       - name: Sign Bundle Image
         id: sign_bundle
         env:
-          IMAGE_URI: ${{ env.BUNDLE_IMAGE_REPOSITORY }}:latest-${{ steps.setup-build-step.outputs.platform_os }}-${{ steps.setup-build-step.outputs.platform_arch }}
+          IMAGE_URI: ${{ env.BUNDLE_IMAGE_REPOSITORY }}@${{ steps.build_push.outputs.digest }}
         run: |
-          signed_image_digest=$(cosign triangulate --type=digest ${{ env.IMAGE_URI }})
-          echo "signed_image_digest=${signed_image_digest}" >> $GITHUB_OUTPUT
-          cosign sign --yes ${signed_image_digest}
+          cosign sign --yes ${IMAGE_URI}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.14.0
@@ -549,10 +545,9 @@ jobs:
           TRIVY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
         with:
           scan-type: image
-          image-ref: ${{ steps.sign_bundle.outputs.signed_image_digest }}
+          image-ref: ${{ env.BUNDLE_IMAGE_REPOSITORY }}@${{ steps.build_push.outputs.digest }}
           format: "cosign-vuln"
           output: "cosign-vuln.json"
-
 
       - name: Run Trivy SBOM generator
         uses: aquasecurity/trivy-action@0.14.0
@@ -561,14 +556,16 @@ jobs:
           TRIVY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
         with:
           scan-type: image
-          image-ref: ${{ steps.sign_bundle.outputs.signed_image_digest }}
+          image-ref: ${{ env.BUNDLE_IMAGE_REPOSITORY }}@${{ steps.build_push.outputs.digest }}
           format: "cyclonedx"
           output: "cyclonedx-sbom.json"
 
       - name: Attach attestations for Bundle Image
+        env:
+          IMAGE_URI: ${{ env.BUNDLE_IMAGE_REPOSITORY }}@${{ steps.build_push.outputs.digest }}
         run: |
-          cosign attest --yes --type vuln --predicate cosign-vuln.json ${{ steps.sign_bundle.outputs.signed_image_digest }}
-          cosign attest --yes --type cyclonedx --predicate cyclonedx-sbom.json ${{ steps.sign_bundle.outputs.signed_image_digest }}
+          cosign attest --yes --type vuln --predicate cosign-vuln.json ${IMAGE_URI}
+          cosign attest --yes --type cyclonedx --predicate cyclonedx-sbom.json ${IMAGE_URI}
 
       - name: Prepare Distribution Artifacts
         shell: bash
