@@ -323,11 +323,6 @@ jobs:
           push: true
           tags: "${{ env.OPERATOR_IMAGE_REPOSITORY }}:latest-${{ steps.setup-build-step.outputs.platform_os }}-${{ steps.setup-build-step.outputs.platform_arch }},${{ env.OPERATOR_IMAGE_REPOSITORY }}:${{ env.OPERATOR_VERSION }}-${{ steps.setup-build-step.outputs.platform_os }}-${{ steps.setup-build-step.outputs.platform_arch }}"
 
-      - name: Cosign login and initialize
-        run: |
-          echo "${{ secrets.REGISTRY_PASSWORD }}" | cosign login --username ${{ secrets.REGISTRY_USERNAME }} --password-stdin ${OPERATOR_IMAGE_REGISTRY%%/*}
-          cosign initialize
-
       - name: Sign Operator Image
         id: sign_operator
         env:
@@ -525,11 +520,6 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: true
           tags: "${{ env.BUNDLE_IMAGE_REPOSITORY }}:latest-${{ steps.setup-build-step.outputs.platform_os }}-${{ steps.setup-build-step.outputs.platform_arch }},${{ env.BUNDLE_IMAGE_REPOSITORY }}:${{ env.BUNDLE_VERSION }}-${{ steps.setup-build-step.outputs.platform_os }}-${{ steps.setup-build-step.outputs.platform_arch }}"
-
-      - name: Cosign login and initialize
-        run: |
-          echo "${{ secrets.REGISTRY_PASSWORD }}" | cosign login --username ${{ secrets.REGISTRY_USERNAME }} --password-stdin ${BUNDLE_IMAGE_REGISTRY%%/*}
-          cosign initialize
 
       - name: Sign Bundle Image
         id: sign_bundle
