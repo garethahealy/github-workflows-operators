@@ -6,8 +6,8 @@
   ],
   "packageRules": [
     {
-      "matchDatasources": [
-        "github-actions"
+      "matchDepTypes": [
+        "action"
       ],
       "matchPackageNames": [
         "slsa-framework/slsa-github-generator"
