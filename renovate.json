@@ -10,7 +10,7 @@
         "github-actions"
       ],
       "matchPackageNames": [
-        "slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml"
+        "slsa-framework/slsa-github-generator"
       ],
       "matchUpdateTypes": [
         "pinDigest"
