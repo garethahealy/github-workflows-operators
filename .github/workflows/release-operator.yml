@@ -354,15 +354,15 @@ jobs:
         with:
           scan-type: image
           image-ref: ${{ env.OPERATOR_IMAGE_REPOSITORY }}@${{ steps.build_push.outputs.digest }}
-          format: "cyclonedx"
-          output: "cyclonedx-sbom.json"
+          format: "spdx-json"
+          output: "spdx-json.json"
 
       - name: Attach attestations for Operator Image
         env:
           IMAGE_URI: ${{ env.OPERATOR_IMAGE_REPOSITORY }}@${{ steps.build_push.outputs.digest }}
         run: |
           cosign attest --yes --type vuln --predicate cosign-vuln.json ${IMAGE_URI}
-          cosign attest --yes --type cyclonedx --predicate cyclonedx-sbom.json ${IMAGE_URI}
+          cosign attest --yes --type spdx --predicate spdx-json.json ${IMAGE_URI}
 
       - name: Prepare Distribution Artifacts
         shell: bash
@@ -557,15 +557,15 @@ jobs:
         with:
           scan-type: image
           image-ref: ${{ env.BUNDLE_IMAGE_REPOSITORY }}@${{ steps.build_push.outputs.digest }}
-          format: "cyclonedx"
-          output: "cyclonedx-sbom.json"
+          format: "spdx-json"
+          output: "spdx-json.json"
 
       - name: Attach attestations for Bundle Image
         env:
           IMAGE_URI: ${{ env.BUNDLE_IMAGE_REPOSITORY }}@${{ steps.build_push.outputs.digest }}
         run: |
           cosign attest --yes --type vuln --predicate cosign-vuln.json ${IMAGE_URI}
-          cosign attest --yes --type cyclonedx --predicate cyclonedx-sbom.json ${IMAGE_URI}
+          cosign attest --yes --type spdx --predicate spdx-json.json ${IMAGE_URI}
 
       - name: Prepare Distribution Artifacts
         shell: bash

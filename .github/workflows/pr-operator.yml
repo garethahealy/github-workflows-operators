@@ -270,8 +270,8 @@ jobs:
         with:
           scan-type: image
           image-ref: ${{ env.OPERATOR_IMAGE_REPOSITORY }}:latest-${{ steps.setup-build-step.outputs.platform_os }}-${{ steps.setup-build-step.outputs.platform_arch }}
-          format: "cyclonedx"
-          output: "operator-cyclonedxsbom.json"
+          format: "spdx-json"
+          output: "operator-spdxjson.json"
 
       - name: Prepare Distribution Artifacts
         shell: bash
@@ -394,8 +394,8 @@ jobs:
         with:
           scan-type: image
           image-ref: ${{ env.BUNDLE_IMAGE_REPOSITORY }}:latest-${{ steps.setup-build-step.outputs.platform_os }}-${{ steps.setup-build-step.outputs.platform_arch }}
-          format: "cyclonedx"
-          output: "bundle-cyclonedxsbom.json"
+          format: "spdx-json"
+          output: "bundle-spdxjson.json"
 
       - name: Prepare Distribution Artifacts
         shell: bash
