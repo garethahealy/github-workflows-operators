@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices",
+    "schedule:earlyMondays"
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": [
+        "github-actions"
+      ],
+      "matchPackageNames": [
+        "slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml"
+      ],
+      "matchUpdateTypes": [
+        "pinDigest"
+      ],
+      "enabled": false
+    }
+  ]
+}
