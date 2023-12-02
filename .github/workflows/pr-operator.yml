@@ -4,6 +4,7 @@ on:
     inputs:
       OPERATOR_SDK_VERSION:
         description: "Version of Operator SDK Binary for installation"
+        # renovate: datasource=github-releases depName=operator-framework/operator-sdk
         default: "v1.9.0"
         required: false
         type: string
@@ -14,7 +15,8 @@ on:
         type: string
       GO_VERSION:
         description: "Go version to use"
-        default: "~1.16"
+        # renovate: datasource=golang-version depName=go
+        default: "1.16.0"
         required: false
         type: string
       RUN_UNIT_TESTS:
