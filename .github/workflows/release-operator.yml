@@ -16,7 +16,7 @@ on:
       GO_VERSION:
         description: "Go version to use"
         # renovate: datasource=docker depName=golang
-        default: "~1.16"
+        default: "1.16"
         required: false
         type: string
       PR_ACTOR:
