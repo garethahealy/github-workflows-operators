@@ -15,7 +15,7 @@ on:
         type: string
       GO_VERSION:
         description: "Go version to use"
-        # renovate: datasource=go
+        # renovate: datasource=golang-version depName=go
         default: "1.16"
         required: false
         type: string
