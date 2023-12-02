@@ -16,7 +16,7 @@ on:
       GO_VERSION:
         description: "Go version to use"
         # renovate: datasource=golang-version depName=go
-        default: "1.16.0"
+        default: "1.21.4"
         required: false
         type: string
       RUN_UNIT_TESTS:
