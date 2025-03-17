@@ -276,7 +276,7 @@ jobs:
           load: true
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # 0.29.0
+        uses: aquasecurity/trivy-action@6c175e9c4083a92bbca2f9724c8a5e33bc2d97a5 # 0.30.0
         with:
           scan-type: image
           image-ref: ${{ env.OPERATOR_IMAGE_REPOSITORY }}:latest-${{ steps.setup-build-step.outputs.platform_os }}-${{ steps.setup-build-step.outputs.platform_arch }}
@@ -284,7 +284,7 @@ jobs:
           output: "operator-cosignvuln.json"
 
       - name: Run Trivy SBOM generator
-        uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # 0.29.0
+        uses: aquasecurity/trivy-action@6c175e9c4083a92bbca2f9724c8a5e33bc2d97a5 # 0.30.0
         with:
           scan-type: image
           image-ref: ${{ env.OPERATOR_IMAGE_REPOSITORY }}:latest-${{ steps.setup-build-step.outputs.platform_os }}-${{ steps.setup-build-step.outputs.platform_arch }}
@@ -403,7 +403,7 @@ jobs:
           load: true
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # 0.29.0
+        uses: aquasecurity/trivy-action@6c175e9c4083a92bbca2f9724c8a5e33bc2d97a5 # 0.30.0
         with:
           scan-type: image
           image-ref: ${{ env.BUNDLE_IMAGE_REPOSITORY }}:latest-${{ steps.setup-build-step.outputs.platform_os }}-${{ steps.setup-build-step.outputs.platform_arch }}
@@ -411,7 +411,7 @@ jobs:
           output: "bundle-cosignvuln.json"
 
       - name: Run Trivy SBOM generator
-        uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # 0.29.0
+        uses: aquasecurity/trivy-action@6c175e9c4083a92bbca2f9724c8a5e33bc2d97a5 # 0.30.0
         with:
           scan-type: image
           image-ref: ${{ env.BUNDLE_IMAGE_REPOSITORY }}:latest-${{ steps.setup-build-step.outputs.platform_os }}-${{ steps.setup-build-step.outputs.platform_arch }}
